@@ -73,20 +73,34 @@ function M.make_anthropic_spec_curl_args(opts, prompt, system_prompt)
 end
 
 function M.make_openai_spec_curl_args(opts, prompt, system_prompt)
-  local url = opts.url
+  -- Define the URL and get the API key
+  local url = opts.url or "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
   local api_key = opts.api_key_name and get_api_key(opts.api_key_name)
+  
+  -- Prepare the request body for Gemini
   local data = {
-    messages = { { role = 'system', content = system_prompt }, { role = 'user', content = prompt } },
-    model = opts.model,
-    temperature = 0.7,
-    stream = true,
+    contents = {
+      {
+        parts = {
+          { text = system_prompt },
+          { text = prompt }
+        }
+      }
+    }
   }
+  
+  -- Prepare the curl arguments
   local args = { '-N', '-X', 'POST', '-H', 'Content-Type: application/json', '-d', vim.json.encode(data) }
+  
+  -- If an API key is provided, include the Authorization header
   if api_key then
     table.insert(args, '-H')
     table.insert(args, 'Authorization: Bearer ' .. api_key)
   end
+  
+  -- Append the URL to the curl arguments
   table.insert(args, url)
+  
   return args
 end
 
