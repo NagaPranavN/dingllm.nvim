@@ -72,23 +72,22 @@ function M.make_anthropic_spec_curl_args(opts, prompt, system_prompt)
   return args
 end
 
-function M.make_openai_spec_curl_args(opts, prompt, system_prompt)
-  local url = opts.url
-  local api_key = opts.api_key_name and get_api_key(opts.api_key_name)
+function M.make_gemini_spec_curl_args(opts, prompt)
+  local url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" .. opts.api_key
   local data = {
-    messages = { { role = 'system', content = system_prompt }, { role = 'user', content = prompt } },
-    model = opts.model,
-    temperature = 0.7,
-    stream = true,
+    contents = {
+      {
+        parts = {
+          { text = system_prompt }
+        }
+      }
+    }
   }
   local args = { '-N', '-X', 'POST', '-H', 'Content-Type: application/json', '-d', vim.json.encode(data) }
-  if api_key then
-    table.insert(args, '-H')
-    table.insert(args, 'Authorization: Bearer ' .. api_key)
-  end
   table.insert(args, url)
   return args
 end
+
 
 function M.write_string_at_cursor(str)
   vim.schedule(function()
