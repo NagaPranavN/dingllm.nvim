@@ -73,7 +73,7 @@ function M.make_anthropic_spec_curl_args(opts, prompt, system_prompt)
 end
 
 function M.make_openai_spec_curl_args(opts, prompt)
-  local url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" .. opts.api_key
+  local url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" .. opts.api_key_name
   local data = {
     contents = {
       {
